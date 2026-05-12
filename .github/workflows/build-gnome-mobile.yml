@@ -71,7 +71,7 @@ jobs:
   
       - name: Choose nothing-spacewar device in pmbootstrap to build kernel
         run: |
-          cp /home/runner/work/spacewar-pmos-dualboot/spacewar-pmos-dualboot/nothing-spacewar.cfg ~/.config/pmbootstrap_v3.cfg
+          cp /home/runner/work/pmos-np1/pmos-np1/nothing-spacewar.cfg ~/.config/pmbootstrap_v3.cfg
    
       - name: Cache or Restore kernel
         uses: actions/cache@v3
