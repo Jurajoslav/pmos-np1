@@ -44,7 +44,7 @@ jobs:
       - name: Install pmbootstrap from git
         run: |
           cd ~/pmbootstrap
-          git reset --hard b60580f8
+          git reset --hard 2425ebb8
           mkdir -p ~/.local/bin
           ln -s ~/pmbootstrap/pmbootstrap.py ~/.local/bin/pmbootstrap
           pmbootstrap --version
