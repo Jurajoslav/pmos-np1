@@ -37,14 +37,10 @@ jobs:
       - name: Substitute placeholders in configs
         run: |
           find . -type f -name "*.cfg" -exec sed -i "s|HOME|$(echo $HOME)|;s|NPROC|$(nproc)|" {} +
-       
-      - name: Download pmbootstrappppppppppp
-        run: git clone https://gitlab.postmarketos.org/postmarketOS/pmbootstrap.git ~/pmbootstrap
         
       - name: Install pmbootstrap from git
         run: |
-          cd ~/pmbootstrap
-          git reset --hard 2425ebb8
+          git clone https://gitlab.postmarketos.org/postmarketOS/pmbootstrap.git ~/pmbootstrap
           mkdir -p ~/.local/bin
           ln -s ~/pmbootstrap/pmbootstrap.py ~/.local/bin/pmbootstrap
           pmbootstrap --version
