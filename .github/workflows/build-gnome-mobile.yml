@@ -33,17 +33,22 @@ jobs:
         run: |
           git config --global user.email "example@example.com"
           git config --global user.name "Jurajoslav"
+          
       - name: Substitute placeholders in configs
         run: |
           find . -type f -name "*.cfg" -exec sed -i "s|HOME|$(echo $HOME)|;s|NPROC|$(nproc)|" {} +
+       
+      - name: Download pmbootstrappppppppppp
+        run: git clone https://gitlab.postmarketos.org/postmarketOS/pmbootstrap.git ~/pmbootstrap
+        
       - name: Install pmbootstrap from git
         run: |
-          git clone https://gitlab.postmarketos.org/postmarketOS/pmbootstrap.git ~/pmbootstrap
           cd ~/pmbootstrap
           git reset --hard b60580f8
           mkdir -p ~/.local/bin
           ln -s ~/pmbootstrap/pmbootstrap.py ~/.local/bin/pmbootstrap
           pmbootstrap --version
+          
       - name: Set up pmaports
         run: |
           echo -e '\n\n' | pmbootstrap init || true
@@ -52,18 +57,22 @@ jobs:
           DEFAULT_BRANCH=danila/spacewar-mr
           git fetch sc7280 $DEFAULT_BRANCH
           git reset --hard sc7280/$DEFAULT_BRANCH
+          
       - name: Check kernel branch
         if: matrix.version == 'default'
         run: |
           DEFAULT_BRANCH=danila/spacewar-testing
           echo "Default branch is $DEFAULT_BRANCH"
           echo "KERNEL_BRANCH=$DEFAULT_BRANCH" >> $GITHUB_ENV
+          
       - name: Clone kernel sources
         run: |
           git clone https://github.com/mainlining/linux.git --single-branch --branch ${{ env.KERNEL_BRANCH }} --depth 1 ~/linux
+  
       - name: Choose nothing-spacewar device in pmbootstrap to build kernel
         run: |
           cp /home/runner/work/spacewar-pmos-dualboot/spacewar-pmos-dualboot/nothing-spacewar.cfg ~/.config/pmbootstrap_v3.cfg
+   
       - name: Cache or Restore kernel
         uses: actions/cache@v3
         id: cache-kernel
@@ -72,6 +81,7 @@ jobs:
           key: ${{ runner.os }}-postmarketOS-kernel-jurajoslav
           restore-keys: |
             ${{ runner.os }}-postmarketOS-kernel-jurojoslav-1-
+   
       - name: Compile kernel with envkernel
         if: steps.cache-kernel.outputs.cache-hit != 'true'
         run: |
@@ -81,9 +91,11 @@ jobs:
           make defconfig sc7280.config
           make -j$(nproc)
           pmbootstrap build --envkernel linux-postmarketos-qcom-sc7280
+   
       - name: Create artifact directory
         run: |
           mkdir out
+    
       - name: Build nothing-spacewar
         run: |
           cp /home/runner/work/spacewar-pmos-dualboot/spacewar-pmos-dualboot/nothing-spacewar.cfg ~/.config/pmbootstrap.cfg
@@ -92,6 +104,7 @@ jobs:
           cp /tmp/postmarketOS-export/boot.img out/boot-nothing-spacewar.img
           simg2img /tmp/postmarketOS-export/nothing-spacewar.img out/rootfs-nothing-spacewar_raw.img
           echo -e "n\nn\ny\n" | pmbootstrap zap
+    
       - name: Compress to a zip for release
         run: |
           zip -r spacewar-pmos-gnome-dualboot.zip out/
